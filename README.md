@@ -71,25 +71,25 @@ The task input ports. Note that booleans, integers and floats **must be** passed
 
 | Name  | Type | Description:                                      | Required |
 |-------|---------|--------------|---------------------------------------------------|
-| chips | String | Contains GeoTiff image chips (feature_id.tif) produced from chips-s3-imagery. Should also contain a geojson 'ref.geojson' with class names for each chip (referenced by feature id). | True |
+| chips | Directory | Contains GeoTiff image chips (feature_id.tif) produced from chips-s3-imagery. Should also contain a geojson 'ref.geojson' with class names for each chip (referenced by feature id). | True |
 | classes  | String | Classes to train network on, each separated by a comma (e.g- 'No Buildings, Buildings'). Must be exactly as they appear in the class_name property of the geojson used to create the chips in the chip-from-vrt task. | True |
-| [min_side_dim](#side-dimensions) | Int | The minimum acceptable side dimension (in pixels) for training chips. Defaults to 0. | False |
-| [max_side_dim](#side-dimensions)  | Int | The maximum acceptable side dimension (in pixels) for training chips. Defaults to 150. | False |
-| [resize_dim](#resize_dim) | Int | Dimension to resize the chip side dimensions to. This should be smaller than the original dimension. Defaults to None | False |
-| [two_rounds](#two_rounds) | Bool | If True, train the network in two rounds- first on balanced classes then on the original distribution of classes. In the second training round only the weights of the final layer of the model will be updated. Recommended if there is class imbalance in the dataset. Defaults to False | False |
-| [train_size](#training-size) | Int | Number of chips to train the network on for the first round of training. Defaults to 10000. | False |
-| [train_size_2](#training-size)  | Int | Number of chips to train on in the second round of training. Only relevant if two_rounds is True. Defaults to half of train_size | False |
-| [batch_size](#batch-size)  | Int | Number of chips to train on per batch. Defaults to 32 | False |
-| [nb_epoch](#nb_epoch) | Int | Number of training epochs to perform for the first round of training. Defaults to 35 | False |
-| [nb_epoch_2](#nb_epoch) | Int | Number of training epochs to perform for the second round of training. Only relevant if two_rounds is True. Defatults to 8. | False |
-| [use_lowest_val_loss](#use_lowest_val_loss)  | Bool | After the first round of training use the model weights that yielded the lowest validation loss as the final model (recommended). Otherwise the model weights after the final epoch will be used. Defaults to True | False |
-| [test](#testing)  | Bool | If True testing will be completed on a subset of chips. A test report with accuracy metrics will be saved as a text file in the 'model' output directory. Defaults to True. | False |
-| [test_size](#testing)  | Int | Number of chips to test on. Only relevant if test is True. Defaults to 1000. | False |
-| [learning_rate](#learning-rate)  | Float | Learning rate for the first round of training. Defaults to 0.001 | False |
-| [learning_rate_2](#learning-rate)  | Float | Learning rate for the second round of training (if applicable). Defaults to 0.01. | False |
-| [bit_depth](#bit_depth)  | Int | Bit depth of the image strips in images. This parameter is necessary for proper normalization. Defaults to 8. | False |
-| [kernel_size](#kernel_size) | Int | Side dimension (in pixels) of the kernels at each convolutional layer in the network. Defaults to 3. | False |
-| small model | Bool | Use a model with 8 layers instead of 16. Useful for large input images (>250 pixels). Defaults to False. | False |
+| [min_side_dim](#side-dimensions) | String | The minimum acceptable side dimension (in pixels) for training chips. Defaults to 0. | False |
+| [max_side_dim](#side-dimensions)  | String | The maximum acceptable side dimension (in pixels) for training chips. Defaults to 150. | False |
+| [resize_dim](#resize_dim) | String | Dimension to resize the chip side dimensions to. This should be smaller than the original dimension. Defaults to None | False |
+| [two_rounds](#two_rounds) | String | If True, train the network in two rounds- first on balanced classes then on the original distribution of classes. In the second training round only the weights of the final layer of the model will be updated. Recommended if there is class imbalance in the dataset. Defaults to False | False |
+| [train_size](#training-size) | String | Number of chips to train the network on for the first round of training. Defaults to 10000. | False |
+| [train_size_2](#training-size)  | String | Number of chips to train on in the second round of training. Only relevant if two_rounds is True. Defaults to half of train_size | False |
+| [batch_size](#batch-size)  | String | Number of chips to train on per batch. Defaults to 32 | False |
+| [nb_epoch](#nb_epoch) | String | Number of training epochs to perform for the first round of training. Defaults to 35 | False |
+| [nb_epoch_2](#nb_epoch) | String | Number of training epochs to perform for the second round of training. Only relevant if two_rounds is True. Defatults to 8. | False |
+| [use_lowest_val_loss](#use_lowest_val_loss)  | String | After the first round of training use the model weights that yielded the lowest validation loss as the final model (recommended). Otherwise the model weights after the final epoch will be used. Defaults to True | False |
+| [test](#testing)  | String | If True testing will be completed on a subset of chips. A test report with accuracy metrics will be saved as a text file in the 'model' output directory. Defaults to True. | False |
+| [test_size](#testing)  | String | Number of chips to test on. Only relevant if test is True. Defaults to 1000. | False |
+| [learning_rate](#learning-rate)  | String | Learning rate for the first round of training. Defaults to 0.001 | False |
+| [learning_rate_2](#learning-rate)  | String | Learning rate for the second round of training (if applicable). Defaults to 0.01. | False |
+| [bit_depth](#bit_depth)  | String | Bit depth of the image strips in images. This parameter is necessary for proper normalization. Defaults to 8. | False |
+| [kernel_size](#kernel_size) | String | Side dimension (in pixels) of the kernels at each convolutional layer in the network. Defaults to 3. | False |
+| small model | String | Use a model with 8 layers instead of 16. Useful for large input images (>250 pixels). Defaults to False. | False |
 
 
 ## Output Ports  
