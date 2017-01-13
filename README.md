@@ -14,8 +14,7 @@ Here we execute an example in which a classifier is trained to find buildings in
     ```python
     from gbdxtools import Interface
     from os.path import join
-    import random
-    import string
+    import uuid
 
     gbdx = Interface()
 
@@ -46,7 +45,7 @@ Here we execute an example in which a classifier is trained to find buildings in
 
     ```python
     train_wf = gbdx.Workflow([train_task])
-    random_str = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
+    random_str = str(uuid.uuid4())
     output_location = join('platform-stories/trial-runs', random_str)
 
     train_wf.savedata(train_task.outputs.trained_model, join(output_location, 'trained_model'))
