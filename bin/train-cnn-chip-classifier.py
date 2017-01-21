@@ -353,7 +353,8 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
 
         # Save train and test data to info directory of output
         shutil.copy(train_geojson, os.path.join(self.info_dir, 'train_data.geojson'))
-        shutil.copy('test_input.geojson', os.path.join(self.info_dir, 'test_data.geojson'))
+        if self.test:
+            shutil.copy('test_input.geojson', os.path.join(self.info_dir, 'test_data.geojson'))
 
 if __name__ == '__main__':
     with TrainCnnChipClassifier() as task:
