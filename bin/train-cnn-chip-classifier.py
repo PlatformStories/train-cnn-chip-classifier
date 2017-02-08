@@ -47,7 +47,7 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
         self.test_size = int(self.get_input_string_port('test_size', default='1000'))
         self.lr_1 = float(self.get_input_string_port('learning_rate', default='0.001'))
         self.lr_2 = float(self.get_input_string_port('learning_rate_2', default='0.01'))
-        self.bit_depth = int(self.get_input_string_port('bit_depth', default='8'))
+        self.max_pixel_intensity = float(self.get_input_string_port('max_pixel_intensity', default='255'))
         self.kernel_size = int(self.get_input_string_port('kernel_size', default='3'))
         self.small_model = ast.literal_eval(self.get_input_string_port('small_model', default='False'))
 
@@ -176,7 +176,6 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
         Each chip will be padded to the input side dimension
         '''
         X, y, chip_names = [], [], []
-        norm_val = float(2 ** self.bit_depth - 1)
 
         # Get chip names for each feature
         for feat in feature_collection:
@@ -191,7 +190,7 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
 
             # Create normed raster array
             for n in xrange(1, bands + 1):
-                raster_array.append(ds.GetRasterBand(n).ReadAsArray() / norm_val)
+                raster_array.append(ds.GetRasterBand(n).ReadAsArray() / self.max_pixel_intensity)
 
             # pad to input shape
             chan, h, w = np.shape(raster_array)

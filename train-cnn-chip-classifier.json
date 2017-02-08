@@ -1,6 +1,6 @@
 {
     "name": "train-cnn-chip-classifier",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Train a convolutional neural network binary classifier on labeled chips produced from chip-from-vrt",
     "properties": {
         "isPublic": true,
@@ -92,9 +92,9 @@
             "required": false
         },
         {
-            "name": "bit_depth",
+            "name": "max_pixel_intensity",
             "type": "string",
-            "description": "Int: bit depth of the image strips in images. This parameter is necessary for proper normalization. Defaults to 8.",
+            "description": "Int: Maximum intensity of pixels in chips (ie. 2 ** bit_depth - 1). Defaults to 255.",
             "required": false
         },
         {
