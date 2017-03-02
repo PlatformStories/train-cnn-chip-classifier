@@ -2,7 +2,7 @@
 
 A GBDX task that takes GeoTiff image chips (output from the [chip-from-vrt](https://github.com/PlatformStories/chip-from-vrt) task) and produces a trained Convolutional Neural Network (CNN) classifier. The network architecture is [VGG Net](https://arxiv.org/pdf/1409.1556.pdf), which was developed as part of the [2014 ImageNet](http://www.image-net.org/challenges/LSVRC/2014/) challenge.
 
-<img src='images/train-cnn-chip-classifier.png' width=400>
+<img src='images/train-cnn-chip-classifier.png' width=500>
 
 
 ## Run
