@@ -1,13 +1,13 @@
 # train-cnn-chip-classifier
 
-A GBDX task that takes GeoTiff image chips created from the [chip-from-vrt](https://github.com/PlatformStories/chip-from-vrt) task and produces a trained Convolutional Neural Network (CNN) classifier. The network architecture is [VGG Net](https://arxiv.org/pdf/1409.1556.pdf), which was developed as part of the [2014 ImageNet](http://www.image-net.org/challenges/LSVRC/2014/) challenge.
+A GBDX task that takes GeoTiff image chips (output from the [chip-from-vrt](https://github.com/PlatformStories/chip-from-vrt) task) and produces a trained Convolutional Neural Network (CNN) classifier. The network architecture is [VGG Net](https://arxiv.org/pdf/1409.1556.pdf), which was developed as part of the [2014 ImageNet](http://www.image-net.org/challenges/LSVRC/2014/) challenge.
 
 <img src='images/train-cnn-chip-classifier.png' width=400>
 
 
 ## Run
 
-Here we execute an example in which a classifier is trained to find buildings in Nigeria from image chips stored on S3. Note that there is also a geojson 'ref.geojson' in this location with class names ('No Buildings' or 'Buildings') for each chip, which will be used to train the network. The chips and reference geojson are all outputs of the [chip-from-vrt](https://github.com/PlatformStories/chip-from-vrt) task.
+Here we execute an example in which a classifier is trained to find buildings in Nigeria from image chips stored on S3. Note that there is also a geojson 'ref.geojson' in this location with geometries, feature ids, and class names ('No Buildings' or 'Buildings') for each chip, which will be used to train the network. The chips and reference geojson are all outputs of the [chip-from-vrt](https://github.com/PlatformStories/chip-from-vrt) task.
 
 1. In a Python terminal create a GBDX interface and specify the task input location:
 
@@ -38,7 +38,6 @@ Here we execute an example in which a classifier is trained to find buildings in
     train_task.inputs.nb_epoch = '50'
     train_task.inputs.train_size = '2500'
     train_task.inputs.test_size = '2000'
-    train_task.inputs.bit_depth = '8'
     ```
 
 4. Initialize a workflow and specify where to save the output:
