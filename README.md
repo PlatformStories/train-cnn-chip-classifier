@@ -85,7 +85,7 @@ The task input ports. Note that booleans, integers and floats **must be** passed
 | [test_size](#testing)  | String | Number of chips to test on. Only relevant if test is True. Defaults to 1000. | False |
 | [learning_rate](#learning-rate)  | String | Learning rate for the first round of training. Defaults to 0.001 | False |
 | [learning_rate_2](#learning-rate)  | String | Learning rate for the second round of training (if applicable). Defaults to 0.01. | False |
-| [max_pixel_intensity](#max_pixel_intensity)  | String | Maximum intensity of pixels in chips (ie. 2<sup>bit_depth</sup> - 1). Defaults to 255. | False |
+| [max_pixel_intensity](#max_pixel_intensity)  | String | Maximum pixel intensity in input chips. Defaults to 255. | False |
 | [kernel_size](#kernel_size) | String | Side dimension (in pixels) of the kernels at each convolutional layer in the network. Defaults to 3. | False |
 | small model | String | Use a model with 8 layers instead of 16. Useful for large input images (>250 pixels). Defaults to False. | False |
 
