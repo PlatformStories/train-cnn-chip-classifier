@@ -7,17 +7,19 @@ import ast, subprocess
 import shutil, os, sys
 import geojson, json
 import numpy as np
+import geojsontools as gt
 
 from sklearn.metrics import classification_report
 from multiprocessing import Pool, cpu_count
-from mltools import geojson_tools as gt
 from functools import partial
 from osgeo import gdal
 from scipy.misc import imresize
-from pool_net import PoolNet
 from gbdx_task_interface import GbdxTaskInterface
+from keras.models import Sequential
 from keras.optimizers import SGD
 from keras.callbacks import ModelCheckpoint
+from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2D
+from keras.layers.core import Dense, Dropout, Activation, Flatten
 
 
 # log file for debugging
@@ -217,6 +219,74 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
         return np.array(X), np.array(y)
 
 
+    def compile_architecture(self):
+        '''
+        Implementation of VGG 16-layer net.
+        '''
+        print 'Compiling VGG Net...'
+
+        model = Sequential()
+        model.add(ZeroPadding2D((1,1), input_shape=self.input_shape))
+        model.add(Convolution2D(64, self.kernel_size, self.kernel_size, activation='relu',
+                                input_shape=self.input_shape))
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(64, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(128, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(128, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(256, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(256, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(256, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(512, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(512, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(512, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(512, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(512, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(ZeroPadding2D((1,1)))
+        model.add(Convolution2D(512, self.kernel_size, self.kernel_size,
+                                activation='relu'))
+        model.add(MaxPooling2D((2,2), strides=(2,2)))
+
+        model.add(Flatten())
+        model.add(Dense(2048, activation='relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(2048, activation='relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(len(self.classes), activation='softmax'))
+
+        sgd = SGD(lr=self.lr_1, decay=0.01, momentum=0.9, nesterov=True)
+        model.compile(optimizer = 'sgd', loss = 'categorical_crossentropy')
+        return model
+
+
     def train_model(self, model, train_geojson, retrain=False):
         '''
         Train model using the chips referenced in train_geojson. Returns a trained
@@ -317,10 +387,7 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
         train_geojson = self.format_geojson()
 
         # Create model architecture
-        p = PoolNet(self.classes, batch_size=self.batch_size,
-                    input_shape=self.input_shape, learning_rate=self.lr_1,
-                    small_model=self.small_model, kernel_size=self.kernel_size)
-        model = p.model
+        model = self.compile_architecture()
 
         # Fit model rnd 1
         mem_error = 'Model does not fit in memory. Please try one or more of the ' \
