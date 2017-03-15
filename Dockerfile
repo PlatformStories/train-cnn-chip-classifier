@@ -31,7 +31,7 @@ RUN apt-get -y update && apt-get -y \
     wget \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pip install gdal numpy h5py theano geojson sklearn keras geojsontools
+RUN pip install gdal numpy h5py theano geojson sklearn keras==1.2.2 geojsontools
 
 ADD ./bin /
 COPY .theanorc /root/.theanorc
