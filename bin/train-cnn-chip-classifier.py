@@ -435,3 +435,4 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
 if __name__ == '__main__':
     with TrainCnnChipClassifier() as task:
         task.invoke()
+
