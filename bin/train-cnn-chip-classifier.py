@@ -3,6 +3,7 @@
 # For now we use the geojson that is present in the output chip directory. User does not input the geojson with class names to the train task (classes are defined when chips are generated).
 
 import logging
+import cv2
 import ast, subprocess
 import shutil, os, sys
 import geojson, json
@@ -12,7 +13,6 @@ import geojsontools as gt
 from sklearn.metrics import classification_report
 from multiprocessing import Pool, cpu_count
 from functools import partial
-from osgeo import gdal
 from scipy.misc import imresize
 from gbdx_task_interface import GbdxTaskInterface
 from keras.models import Sequential
@@ -63,11 +63,11 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
         if len([f for f in os.listdir('.') if f.endswith('.tar')]) == 1:
             archive = [f for f in os.listdir('.') if f.endswith('.tar')][0]
             print 'Untar'
-            cmd = 'tar -xvf ' + archive
+            cmd = 'tar -xf ' + archive
             subprocess.call(cmd, shell=True)
             self.chip_dir = os.path.join(self.chip_dir, archive[:-4])
             os.chdir(self.chip_dir)
-            
+
         os.makedirs('models') # Create directory to save model after each epoch
         ref_geoj = [f for f in os.listdir('.') if f.endswith('ref.geojson')][0]
         chips = [f for f in os.listdir('.') if f.endswith('.tif')]
@@ -75,14 +75,14 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
         # Get chip and reference geojson info
         self.geojson = os.path.join(self.chip_dir, ref_geoj)
         self.chips = [os.path.join(self.chip_dir, ch) for ch in chips]
-        self.n_bands = gdal.Open(self.chips[0]).RasterCount
+        self.n_bands = cv2.imread(self.chips[0]).shape[-1]
         logging.info('Detected number of bands: ' + str(self.n_bands))
 
         # Get input_shape info
         if self.resize_dim:
-            self.input_shape = [self.n_bands, self.resize_dim, self.resize_dim]
+            self.input_shape = [self.resize_dim, self.resize_dim, self.n_bands]
         else:
-            self.input_shape = [self.n_bands, self.max_side_dim, self.max_side_dim]
+            self.input_shape = [self.max_side_dim, self.max_side_dim, self.n_bands]
         logging.info('Input shape: ' + str(self.input_shape))
 
         # Create output data ports
@@ -125,11 +125,11 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
         # Filter chips
         for feat in feature_collection:
             chip_name = str(feat['properties']['feature_id']) + '.tif'
-            chip = gdal.Open(chip_name)
+            chip = cv2.imread(chip_name)
 
             try:
-                min_side = min(chip.RasterXSize, chip.RasterYSize)
-                max_side = max(chip.RasterXSize, chip.RasterYSize)
+                min_side = min(chip.shape[:-1])
+                max_side = max(chip.shape[:-1])
             except (AttributeError):
                 logging.debug('Chip not found in directory: ' + chip_name)
                 continue
@@ -196,35 +196,13 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
             chip_names.append([name, clss])
 
         for chip, clss in chip_names:
-            raster_array = []
-            ds = gdal.Open(chip)
-            bands = ds.RasterCount
-
-            # Create normed raster array
-            for n in xrange(1, bands + 1):
-                raster_array.append(ds.GetRasterBand(n).ReadAsArray() / self.max_pixel_intensity)
-
-            # pad to input shape
-            chan, h, w = np.shape(raster_array)
-            pad_h, pad_w = self.max_side_dim - h, self.max_side_dim - w
-            chip_patch = np.pad(raster_array, [(0, 0), (pad_h/2, (pad_h - pad_h/2)),
-                                (pad_w/2, (pad_w - pad_w/2))], 'constant',
-                                constant_values=0)
-
-            # resize chip
-            if self.resize_dim:
-                new_chip = []
-                for band_ix in xrange(len(chip_patch)):
-                    new_chip.append(imresize(chip_patch[band_ix],
-                                    self.input_shape[-2:]).astype(float))
-                chip_patch = np.array(new_chip)
+            chip_patch = cv2.imread(chip)
+            chip_patch = cv2.resize(chip_patch, (self.input_shape[0], self.input_shape[0]))
+            chip_patch = chip_patch / self.max_pixel_intensity
 
             # Add raster array and one-hot class to X and y
             X.append(chip_patch)
             y.append(self.class_dict[clss])
-
-            # sys.stdout.write('\r%{0:.2f}'.format(100 * (len(y)) / float(len(feature_collection))) + ' ' * 20)
-            # sys.stdout.flush()
 
         return np.array(X), np.array(y)
 
@@ -435,4 +413,3 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
 if __name__ == '__main__':
     with TrainCnnChipClassifier() as task:
         task.invoke()
-
