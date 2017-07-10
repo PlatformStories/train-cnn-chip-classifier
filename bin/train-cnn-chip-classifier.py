@@ -58,6 +58,16 @@ class TrainCnnChipClassifier(GbdxTaskInterface):
 
         # Format working directory
         os.chdir(self.chip_dir) # !!!!! Now in chip directory for remainder of task
+
+        # Untar chips (if necessary)
+        if len([f for f in os.listdir('.') if f.endswith('.tar')]) == 1:
+            archive = [f for f in os.listdir('.') if f.endswith('.tar')][0]
+            print 'Untar'
+            cmd = 'tar -xvf ' + archive
+            subprocess.call(cmd, shell=True)
+            self.chip_dir = os.path.join(self.chip_dir, archive[:-4])
+            os.chdir(self.chip_dir)
+            
         os.makedirs('models') # Create directory to save model after each epoch
         ref_geoj = [f for f in os.listdir('.') if f.endswith('ref.geojson')][0]
         chips = [f for f in os.listdir('.') if f.endswith('.tif')]
