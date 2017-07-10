@@ -22,3 +22,4 @@ RUN pip install numpy h5py tensorflow-gpu geojson geojsontools sklearn keras==1.
 
 COPY ./bin /
 COPY keras.json /root/.keras/keras.json
+
