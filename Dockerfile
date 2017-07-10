@@ -1,4 +1,4 @@
-FROM nvidia/cuda:7.5-cudnn4-devel
+FROM nvidia/cuda:7.5-cudnn5-devel
 
 MAINTAINER Nikki Aldeborgh <nikki.aldeborgh@digitalglobe.com>
 
@@ -12,11 +12,15 @@ RUN apt-get -y update && apt-get -y \
     python-scipy \
     python-numpy \
     python-dev \
+    python-six \
     gdal-bin \
     python-gdal \
     libgdal-dev \
     libspatialite-dev \
     sqlite3 \
+    libatlas-base-dev \
+    gfortran \
+    libyaml-dev \
     libpq-dev \
     libcurl4-gnutls-dev \
     libproj-dev \
@@ -31,8 +35,10 @@ RUN apt-get -y update && apt-get -y \
     wget \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pip install gdal numpy h5py theano geojson sklearn keras==1.2.2 geojsontools
+RUN pip install gdal numpy h5py geojson sklearn keras==1.2.2 geojsontools
+RUN pip install --upgrade six
+RUN pip install Theano==0.9.0
 
-ADD ./bin /
+COPY ./bin /
 COPY .theanorc /root/.theanorc
 COPY keras.json /root/.keras/keras.json
