@@ -1,6 +1,6 @@
 {
     "name": "train-cnn-chip-classifier",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "Train a convolutional neural network binary classifier on labeled chips produced from chip-from-vrt",
     "properties": {
         "isPublic": true,
