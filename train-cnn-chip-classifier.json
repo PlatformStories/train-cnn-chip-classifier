@@ -1,6 +1,6 @@
 {
     "name": "train-cnn-chip-classifier",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "description": "Train a convolutional neural network binary classifier on labeled chips produced from chip-from-vrt",
     "properties": {
         "isPublic": true,
@@ -134,7 +134,7 @@
             "type": "DOCKER",
             "properties": {
                 "image": "platformstories/train-cnn-chip-classifier",
-                "domain": "nvidiap2"
+                "domain": "nvidiag2"
             },
             "command": "python /train-cnn-chip-classifier.py",
             "isPublic": true
