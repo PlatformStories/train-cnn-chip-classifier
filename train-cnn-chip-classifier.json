@@ -1,6 +1,7 @@
 {
     "name": "train-cnn-chip-classifier",
     "version": "0.0.9",
+    "taskOwnerEmail": "kostas.stamatiou@digitalglobe.com",
     "description": "Train a convolutional neural network binary classifier on labeled chips produced from chip-from-vrt",
     "properties": {
         "isPublic": true,
